@@ -48,7 +48,7 @@ const playerChoice = async ({ io, room, player, choice }) => {
         logger.info(`(rps-realtime-module): Game winner ${gameWinner}`);
         await GameModel.removeList(room);
         const playerGameWinner = (gameWinner.player1.wins === 3) ? gameWinner.player1.user : gameWinner.player2.user;
-        const playerGameLooser = (gameWinner.player1.wins <= 3) ? gameWinner.player1.user : gameWinner.player2.user;
+        const playerGameLooser = (playerGameWinner === gameWinner.player1.user) ? gameWinner.player2.user : gameWinner.player1.user;
         const gameWinnerMessage = await sendMessage({
           io,
           room,

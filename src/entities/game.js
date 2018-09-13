@@ -21,9 +21,8 @@ class Room {
   async read(roomId) {
     logger.info(`(rps-realtime-module): Will read members of game ${roomId}`);
     const gameMembers = await this.redis.smembers(`${this.name}:${roomId}`);
-    
-    return gameMembers;
 
+    return gameMembers;
   }
   // Method to remove member of room
   async remove({ room: roomId, user: userId, choice }) {

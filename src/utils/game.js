@@ -10,8 +10,8 @@ const findWinner = async (players) => {
     choice: (players[0].split(':'))[1],
   };
   const player2 = {
-    user: (players[2].split(':'))[0],
-    choice: (players[2].split(':'))[1],
+    user: (players[1].split(':'))[0],
+    choice: (players[1].split(':'))[1],
   };
 
   // Rules

@@ -19,7 +19,7 @@ class Room {
     await this.redis.sadd(`${this.name}:${roomId}`, userId);
   }
   // Method to remove member of room
-  async remove({ room: roomId, user: userId}) {
+  async remove({ room: roomId, user: userId }) {
     logger.info(`(rps-realtime-module): Will remove user ${userId} to room ${roomId}`);
     await this.redis.srem(`${this.name}:${roomId}`, userId);
   }
