@@ -1,4 +1,5 @@
 // Models
 const Room = require('./Room');
+const Game = require('./game');
 
-module.exports = { Room };
+module.exports = { Room, Game };

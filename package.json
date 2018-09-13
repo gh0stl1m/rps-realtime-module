@@ -15,6 +15,7 @@
   "dependencies": {
     "dotenv": "6.0.0",
     "ioredis": "4.0.0",
+    "lodash": "4.17.11",
     "rps-room-module": "git+https://github.com/gh0stl1m/rps-room-module",
     "socket.io": "2.1.1",
     "socket.io-redis": "5.2.0",

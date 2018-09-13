@@ -3,7 +3,7 @@ const IO = require('socket.io');
 const redisAdapter = require('socket.io-redis');
 
 // Use cases
-const { room } = require('../useCases');
+const { room, game } = require('../useCases');
 
 // Config
 const config = require('../config/redis');
@@ -44,11 +44,11 @@ const initServer = (server) => {
   });
   // Events
   server.on('connection', (socket) => {
-    logger.info(`Player connected connected ${socket.client.player}`);
+    logger.info(`(rps-realtime-module): Player ${socket.client.player} connected`);
 
     // Join to room
     socket.on(events.JOIN_ROOM, async (data) => {
-      logger.info(`User data: ${data}`);
+      logger.info(`(rps-realtime-module): Player number: ${data}`);
       await room.joinToRoom({
         socket,
         room: socket.client.room,
@@ -57,14 +57,19 @@ const initServer = (server) => {
       });
     });
 
-    socket.on('send_message', (data) => {
-      server.sockets.emit('message', { data });
+    // Player choice
+    socket.on(events.PLAYER_CHOICE, async (data) => {
+      await game.playerChoice({
+        io: server,
+        room: socket.client.room,
+        player: socket.client.player,
+        choice: data,
+      });
     });
-
   
     // Disconnect client
     socket.on('disconnect', async () => {
-      logger.info(`Disconnect user ${socket.client.player}`);
+      logger.info(`(rps-realtime-module): Disconnect user ${socket.client.player}`);
       await RoomModel.remove({
         room: socket.client.room,
         user: socket.client.player

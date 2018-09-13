@@ -1,4 +1,5 @@
 // Use cases
 const room = require('./room');
+const game = require('./game');
 
-module.exports = { room };
+module.exports = { room, game };
