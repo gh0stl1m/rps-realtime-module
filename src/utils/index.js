@@ -1,2 +1,4 @@
 // Utilities
-module.exports = {};
+const gameUtilities = require('./game');
+
+module.exports = { gameUtilities };
