@@ -40,7 +40,7 @@ const playerChoice = async ({ io, room, player, choice }) => {
   const gamePlays = await GameModel.read(room);
   if (gamePlays.length === 2) {
     // Find winner
-    const playerWinner = gameUtilities.findWinner(gamePlays);
+    const playerWinner = await gameUtilities.findWinner(gamePlays);
     if (playerWinner) {
       logger.info(`(rps-realtime-module): Round winner ${playerWinner}`);
       const gameWinner = await roomInterface.AddGameRound({ room, winner: playerWinner, choice });

@@ -33,14 +33,14 @@ const initServer = (server) => {
   server.use(async (socket, next) => {
     const req = socket.request._query;
     const roomId = req.room;
-    const playerId = req.player
+    const playerId = req.player;
     if (!roomId || !playerId) {
       return next(new BusinessError(errorNames.PARAMS_REQUIRED, 'rps-realtime-module'));
     }
     socket.client.room = roomId;
     socket.client.player = playerId;
-    
-    next();
+
+    return next();
   });
   // Events
   server.on('connection', (socket) => {
@@ -66,17 +66,17 @@ const initServer = (server) => {
         choice: data,
       });
     });
-  
+
     // Disconnect client
     socket.on('disconnect', async () => {
       logger.info(`(rps-realtime-module): Disconnect user ${socket.client.player}`);
       await RoomModel.remove({
         room: socket.client.room,
-        user: socket.client.player
+        user: socket.client.player,
       });
     });
   });
-}
+};
 
 // Create instance for socket io
 const io = new IO({}, {
@@ -113,4 +113,4 @@ const StartServer = (port) => {
   }
 };
 
-module.exports = { io, StartServer}
+module.exports = { io, StartServer };
