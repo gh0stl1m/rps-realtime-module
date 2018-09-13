@@ -1,5 +1,5 @@
 // External libraries
-const { roomInterface } = require('rsp-room-module');
+const { roomInterface } = require('rps-room-module');
 
 // Errors
 const errorNames = require('../errors');
