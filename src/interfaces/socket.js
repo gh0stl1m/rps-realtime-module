@@ -2,16 +2,26 @@
 const IO = require('socket.io');
 const redisAdapter = require('socket.io-redis');
 
+// Use cases
+const { room } = require('../useCases');
+
 // Config
 const config = require('../config/redis');
 
 // Logger
 const logger = require('../logger');
 
+// Error
+const BusinessError = require('../BusinessError');
+const errorNames = require('../errors');
+
+// Events
+const events = require('../events');
+
 // Models
 const { Room } = require('../entities');
 
-// Model instance
+// Room model instace
 const RoomModel = new Room('room');
 
 /**
@@ -20,14 +30,46 @@ const RoomModel = new Room('room');
  */
 const initServer = (server) => {
   // Socket middleware
-  server.use((socket, next) => {
+  server.use(async (socket, next) => {
     const req = socket.request._query;
-    console.log('PARAMS: ', req);
+    const roomId = req.room;
+    const playerId = req.player
+    if (!roomId || !playerId) {
+      return next(new BusinessError(errorNames.PARAMS_REQUIRED, 'rps-realtime-module'));
+    }
+    socket.client.room = roomId;
+    socket.client.player = playerId;
+    
     next();
   });
   // Events
   server.on('connection', (socket) => {
-    socket.emit('connected', 'connection established succedd');
+    logger.info(`Player connected connected ${socket.client.player}`);
+
+    // Join to room
+    socket.on(events.JOIN_ROOM, async (data) => {
+      logger.info(`User data: ${data}`);
+      await room.joinToRoom({
+        socket,
+        room: socket.client.room,
+        user: socket.client.player,
+        player: data,
+      });
+    });
+
+    socket.on('send_message', (data) => {
+      server.sockets.emit('message', { data });
+    });
+
+  
+    // Disconnect client
+    socket.on('disconnect', async () => {
+      logger.info(`Disconnect user ${socket.client.player}`);
+      await RoomModel.remove({
+        room: socket.client.room,
+        user: socket.client.player
+      });
+    });
   });
 }
 
