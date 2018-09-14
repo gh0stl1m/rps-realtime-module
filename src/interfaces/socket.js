@@ -55,6 +55,16 @@ const initServer = (server) => {
         user: socket.client.player,
         player: data,
       });
+      // Send message ro room
+      await room.sendMessage({
+        io: server,
+        room: socket.client.room,
+        event: events.PLAYER_JOINED,
+        data: {
+          message: 'PLAYER_JOINED',
+          user: socket.client.player,
+        },
+      });
     });
 
     // Player choice
